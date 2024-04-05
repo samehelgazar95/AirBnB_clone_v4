@@ -86,13 +86,21 @@ button:hover {
     padding-bottom: 10px;
     padding-left: 10px;
 }
-.popover ul li{
+.locations .popover ul li{
     padding: 4px;
     padding-left: 10px;
 }
 
-.popover ul li input{
+.amenities .popover ul li{
+    padding: 4px;
     padding-left: 10px;
+    display: flex;
+}
+
+.amenities .popover ul li input{
+    padding-left: 10px;
+    display: flex;
+    margin-right: 10px;
 }
 .popover ul h2{
     margin-top: 1.5%;
@@ -103,4 +111,12 @@ button:hover {
 .amenities:hover .popover,
 .locations:hover .popover {
     visibility: visible;
+}
+
+.amenities h4{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+    height: 16px;
 }
