@@ -22,71 +22,32 @@ $('document').ready(function () {
     }
   });
 
-  // $.ajax({
-  //   url: 'http://0.0.0.0:5001/api/v1/places_search/',
-  //   type: 'POST',
-  //   contentType: 'application/json',
-  //   data: JSON.stringify({}),
-  // })
-  //   .done(function (data) {
-  //     $.each(data, function (idx, place) {
-  //       $.get(`http://0.0.0.0:5001/api/v1/users/${place.user_id}`, (user) => {
-  //         $('.places').append(
-  //           $(`
-  //           <article>
-  //             <div class="title_box">
-  //               <h2>${place.name}</h2>
-  //               <div class="price_by_night">$ ${place.price_by_night}</div>
-  //             </div>
-  //             <div class="information">
-  //                 <div class="max_guest">${place.max_guest} Guest${
-  //             place.max_guest != 1 ? 's' : ''
-  //           }</div>
-  //                 <div class="number_rooms">${place.number_rooms} Bedroom${
-  //             place.number_rooms != 1 ? 's' : ''
-  //           }</div>
-  //                 <div class="number_bathrooms">${
-  //                   place.number_bathrooms
-  //                 } Bathroom${place.number_bathrooms != 1 ? 's' : ''}</div>
-  //             </div>
-  //             <div class="user">
-  //                 <b>Owner: </b>${user.first_name} ${user.last_name}
-  //             </div>
-  //             <div class="description">${place.description}</div>
-  //           </article>
-  //         `)
-  //         );
-  //       });
-  //     });
-  //   })
-  //   .fail(function (xhr, status, errorThrown) {
-  //     console.log(`Status: ${status}, Error: ${errorThrown}`);
-  //   });
-
-  // THe above commented code is the right code, the bottom one is for testing last task
-  // i will create article function to return the article tag
-  // and then create the ajax again based on if the amenitiesLen is 0 or > 0
+  // Trying to make the filter but doesnot work as needed
+  // console log will show clarify the issue
+  const idsFiltered = {
+    states: [],
+    cities: [],
+    amenities: [],
+  };
   $('.filters button').click(function (e) {
     let amenitiesLen = Object.keys(selectedAmenities).length;
     if (amenitiesLen > 0) {
-      for (const [key, val] of Object.entries(selectedAmenities)) {
-        console.log('Amenity ID', val);
+      for (const id of Object.values(selectedAmenities)) {
+        idsFiltered['amenities'].push(String(id));
       }
     }
+    console.log(idsFiltered);
+    console.log(Object.keys(selectedAmenities).length);
   });
 
   $.ajax({
     url: 'http://0.0.0.0:5001/api/v1/places_search/',
     type: 'POST',
     contentType: 'application/json',
-    data: JSON.stringify({
-      amenities: ['3fccec93-2842-49a0-8fdb-4008af2ef041'],
-    }),
+    data: JSON.stringify(idsFiltered),
   })
     .done(function (data) {
-      let counter = 0;
       $.each(data, function (idx, place) {
-        counter++;
         $.get(`http://0.0.0.0:5001/api/v1/users/${place.user_id}`, (user) => {
           $('.places').append(
             $(`
@@ -115,9 +76,58 @@ $('document').ready(function () {
           );
         });
       });
-      console.log(counter);
     })
     .fail(function (xhr, status, errorThrown) {
       console.log(`Status: ${status}, Error: ${errorThrown}`);
     });
+
+  // Here i was just trying to separate the article tag from the fetching function to make it readable
+  // But it's needed to be handled using async await concept
+  //   function createArticleForPlace(place) {
+  //     $.get(`http://0.0.0.0:5001/api/v1/users/${place.user_id}`, (user) => {
+  //       const place = $(`
+  //           <article>
+  //               <div class="title_box">
+  //                 <h2>${place.name}</h2>
+  //                 <div class="price_by_night">$ ${place.price_by_night}</div>
+  //               </div>
+  //               <div class="information">
+  //                   <div class="max_guest">${place.max_guest} Guest${
+  //         place.max_guest != 1 ? 's' : ''
+  //       }</div>
+  //                   <div class="number_rooms">${place.number_rooms} Bedroom${
+  //         place.number_rooms != 1 ? 's' : ''
+  //       }</div>
+  //                   <div class="number_bathrooms">${
+  //                     place.number_bathrooms
+  //                   } Bathroom${place.number_bathrooms != 1 ? 's' : ''}</div>
+  //               </div>
+  //               <div class="user">
+  //                   <b>Owner: </b>${user.first_name} ${user.last_name}
+  //               </div>
+  //               <div class="description">${place.description}</div>
+  //             </article>
+  //           `);
+  //       return place;
+  //     });
+  //   }
+
+  //   $.ajax({
+  //     url: 'http://0.0.0.0:5001/api/v1/places_search/',
+  //     type: 'POST',
+  //     contentType: 'application/json',
+  //     data: JSON.stringify(idsObj),
+  //   })
+  //     .done(function (data) {
+  //       let counter = 0;
+  //       $.each(data, function (idx, place) {
+  //         placeArticle = createArticleForPlace(place);
+  //         $('.places').append(placeArticle);
+  //         counter++;
+  //       });
+  //       console.log(counter);
+  //     })
+  //     .fail(function (xhr, status, errorThrown) {
+  //       console.log(`Status: ${status}, Error: ${errorThrown}`);
+  //     });
 });
