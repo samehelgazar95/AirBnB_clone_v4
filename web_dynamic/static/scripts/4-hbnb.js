@@ -12,6 +12,10 @@ $('document').ready(function () {
     if ($.isEmptyObject(selectedAmenities)) {
       $('.amenities h4').html('&nbsp;');
     }
+
+    for (const [k, v] of Object.entries(selectedAmenities)) {
+      console.log(k, v);
+    }
   });
 
   $.getJSON('http://0.0.0.0:5001/api/v1/status/', (body) => {
@@ -22,35 +26,42 @@ $('document').ready(function () {
     }
   });
 
-  // Trying to make the filter but doesnot work as needed
-  // console log will show clarify the issue
-  const idsFiltered = {
+  // >>> BUG <<< THe filter just works fine when filtering with only one amenity
+  // but when choosing more than amenity it will not work properly
+
+  // the Fetch will start on clicking the search button
+  // first will check if the user filtered the amenities,
+  // i will add ids of those amenities to the idsFiltered object
+  //  and then pass this object to the ajax url and api route will handle the filtering
+  let idsFiltered = {
     states: [],
     cities: [],
     amenities: [],
   };
-  $('.filters button').click(function (e) {
-    let amenitiesLen = Object.keys(selectedAmenities).length;
-    if (amenitiesLen > 0) {
+
+  $('.filters button').click(function () {
+    if (Object.keys(selectedAmenities).length > 0) {
       for (const id of Object.values(selectedAmenities)) {
         idsFiltered['amenities'].push(String(id));
       }
     }
-    console.log(idsFiltered);
-    console.log(Object.keys(selectedAmenities).length);
-  });
 
-  $.ajax({
-    url: 'http://0.0.0.0:5001/api/v1/places_search/',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify(idsFiltered),
-  })
-    .done(function (data) {
-      $.each(data, function (idx, place) {
-        $.get(`http://0.0.0.0:5001/api/v1/users/${place.user_id}`, (user) => {
-          $('.places').append(
-            $(`
+    $.ajax({
+      url: 'http://0.0.0.0:5001/api/v1/places_search/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(idsFiltered),
+    })
+      .done(function (data) {
+        // But before every fetch i clean up the current places
+        // in order not to have the previous places with the current ones
+        $('.places').empty();
+        $.each(data, function (idx, place) {
+          $.get(`http://0.0.0.0:5001/api/v1/users/${place.user_id}`, (user) => {
+            $('.places').append(
+              // it's better to create function to create this tag separatly
+              // i tried to it in the below code, but got some errors
+              $(`
             <article>
               <div class="title_box">
                 <h2>${place.name}</h2>
@@ -58,11 +69,11 @@ $('document').ready(function () {
               </div>
               <div class="information">
                   <div class="max_guest">${place.max_guest} Guest${
-              place.max_guest != 1 ? 's' : ''
-            }</div>
+                place.max_guest != 1 ? 's' : ''
+              }</div>
                   <div class="number_rooms">${place.number_rooms} Bedroom${
-              place.number_rooms != 1 ? 's' : ''
-            }</div>
+                place.number_rooms != 1 ? 's' : ''
+              }</div>
                   <div class="number_bathrooms">${
                     place.number_bathrooms
                   } Bathroom${place.number_bathrooms != 1 ? 's' : ''}</div>
@@ -73,13 +84,24 @@ $('document').ready(function () {
               <div class="description">${place.description}</div>
             </article>
           `)
-          );
+            );
+          });
         });
+      })
+      .fail(function (xhr, status) {
+        console.log(`Error code: ${xhr.status}`);
+        console.log(`Status: ${status}`);
+      })
+      // Here iam cleaning the idsFiltered after fetching
+      // in order not to have repeated ids for same amenities
+      .always(function () {
+        idsFiltered = {
+          states: [],
+          cities: [],
+          amenities: [],
+        };
       });
-    })
-    .fail(function (xhr, status, errorThrown) {
-      console.log(`Status: ${status}, Error: ${errorThrown}`);
-    });
+  });
 
   // Here i was just trying to separate the article tag from the fetching function to make it readable
   // But it's needed to be handled using async await concept
