@@ -9,13 +9,13 @@
     <link type="text/css" rel="stylesheet" href="../static/styles/8-places.css?{{ cache_id }}">
     <link rel="icon" href="../static/images/icon.png?{{ cache_id }}" />
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-	<script src="static/scripts/2-hbnb.js?{{ cache_id }}"></script>
+	<script src="static/scripts/3-hbnb.js?{{ cache_id }}"></script>
     <title>HBnB</title>
   </head>
   <body>
     <header>
-      <div class="logo"></div>
-	<div id="api_status"></div>
+    	<div class="logo"></div>
+		<div id="api_status"></div>
     </header>
     <div class="container">
       <section class="filters">
@@ -55,9 +55,10 @@
 	<button type="button">Search</button>
       </section>
       <div class="placesh1"><h1>Places</h1></div>
+
       <section class="places">
-	<!-- <h1>Places</h1> -->
-	{% for place in places %}
+	  <h1>Places</h1>
+	<!-- {% for place in places %}
 	<article>
 	  <div class="title_box">
 	    <h2>{{ place.name }}</h2>
@@ -75,8 +76,9 @@
 	    {{ place.description | safe }}
           </div>
 	</article>
-	{% endfor %}
+	{% endfor %} -->
       </section>
+
     </div>
     <footer>
       <p>Holberton School</p>
