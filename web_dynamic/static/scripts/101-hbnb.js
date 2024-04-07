@@ -108,6 +108,30 @@ $('document').ready(function () {
                   <b>Owner: </b>${user.first_name} ${user.last_name}
               </div>
               <div class="description"><p>${place.description}</p></div>
+              <div class="amenities">
+                    <h2>Amenities</h2>
+                    <ul>
+                        <li class="tv">TV</li>
+                        <li class="wifi">Wifi</li>
+                    </ul>
+                    <div class=reviews>
+                        <h2>3 Reviews</h2>
+                        <ul>
+                            <li>
+                                <h3>From Kamie Nean the 6th September 2017</h3>
+                                <p>I felt like a Queen during my stay!</p>
+                            </li>
+                            <li>
+                                <h3>From Heman the 5th October 2017</h3>
+                                <p>Beautiful Place.</p>
+                            </li>
+                            <li>
+                                <h3>From Numa the 15th August 2017</h3>
+                                <p>Great view and service!</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </article>
           `).appendTo('.places');
             }
