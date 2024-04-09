@@ -62,6 +62,7 @@ $('document').ready(function () {
     first will check if the user filtered the amenities,
     it will add ids of those amenities to the filteredIds object, then clear the places' previous children
     and then pass this filteredIds to the ajax url and api route will handle the filtering,
+    then fetch the user and then the reviews and
     then create the article and append it to places
   */
 
@@ -87,7 +88,22 @@ $('document').ready(function () {
           $.get(
             `http://0.0.0.0:5001/api/v1/users/${place.user_id}`,
             function (user) {
-              $(`
+              $.get(
+                `http://0.0.0.0:5001/api/v1/places/${place.id}/reviews`,
+                function (reviews) {
+                  let reviewsList = '';
+                  for (let i = 0; i < 3; i++) {
+                    let date = new Date(String(reviews[i].created_at));
+                    reviewsList += `
+                    <li>
+                    <p><b>Review at: ${date.getFullYear()}, ${
+                      date.getMonth() + 1
+                    }</b></p>
+                    <p>${reviews[i].text}</p>
+                    </li>
+                    `;
+                  }
+                  $(`
             <article>
               <div class="title_box">
                 <h2>${place.name}</h2>
@@ -95,11 +111,11 @@ $('document').ready(function () {
               </div>
               <div class="information">
                   <div class="max_guest">${place.max_guest} Guest${
-                place.max_guest != 1 ? 's' : ''
-              }</div>
+                    place.max_guest != 1 ? 's' : ''
+                  }</div>
                   <div class="number_rooms">${place.number_rooms} Bedroom${
-                place.number_rooms != 1 ? 's' : ''
-              }</div>
+                    place.number_rooms != 1 ? 's' : ''
+                  }</div>
                   <div class="number_bathrooms">${
                     place.number_bathrooms
                   } Bathroom${place.number_bathrooms != 1 ? 's' : ''}</div>
@@ -109,31 +125,17 @@ $('document').ready(function () {
               </div>
               <div class="description"><p>${place.description}</p></div>
               <div class="amenities">
-                    <h2>Amenities</h2>
-                    <ul>
-                        <li class="tv">TV</li>
-                        <li class="wifi">Wifi</li>
-                    </ul>
-                    <div class=reviews>
-                        <h2>3 Reviews</h2>
-                        <ul>
-                            <li>
-                                <h3>From Kamie Nean the 6th September 2017</h3>
-                                <p>I felt like a Queen during my stay!</p>
-                            </li>
-                            <li>
-                                <h3>From Heman the 5th October 2017</h3>
-                                <p>Beautiful Place.</p>
-                            </li>
-                            <li>
-                                <h3>From Numa the 15th August 2017</h3>
-                                <p>Great view and service!</p>
-                            </li>
-                        </ul>
-                    </div>
+                <div class=reviews>
+                          <h2>Reviews</h2>
+                          <ul>
+                              ${reviewsList}
+                          </ul>
                 </div>
+              </div>
             </article>
           `).appendTo('.places');
+                }
+              );
             }
           );
         });
